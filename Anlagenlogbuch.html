@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PaulTech AG | Anlagenlogbuch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0c1724;
+      --bg-2: #0f2136;
+      --card: #12243a;
+      --card-strong: #19314d;
+      --accent: #2dd4ff;
+      --accent-2: #1a8cff;
+      --text: #e8f1fb;
+      --muted: #9db3ce;
+      --border: rgba(255,255,255,0.08);
+      --danger: #ff6b6b;
+      --success: #48e59c;
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(140% 90% at 20% 20%, rgba(45,212,255,0.20), transparent 35%),
+        radial-gradient(120% 90% at 80% 0%, rgba(26,140,255,0.22), transparent 40%),
+        linear-gradient(135deg, var(--bg), var(--bg-2));
+      padding: 28px;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      gap: 20px;
+    }
+
+    header {
+      background: linear-gradient(120deg, rgba(45,212,255,0.12), rgba(26,140,255,0.05));
+      border: 1px solid rgba(45,212,255,0.18);
+      border-radius: 18px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 6px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1c6dd6 0%, #0a1438 70%);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      box-shadow: 0 10px 30px rgba(26,140,255,0.35);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: -0.01em;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    h1 span {
+      font-weight: 500;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .grid-form {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    label { font-weight: 700; font-size: 13px; color: #dfe9f5; letter-spacing: 0.01em; }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: #0f1f32;
+      color: var(--text);
+      font: inherit;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.1s ease;
+    }
+
+    input::placeholder, select::placeholder, textarea::placeholder { color: #8ba3c5; }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #2dd4ff;
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 3px rgba(45,212,255,0.18);
+    }
+
+    textarea {
+      min-height: 170px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 6px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 11px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #0b1221;
+      background: linear-gradient(120deg, var(--accent), var(--accent-2));
+      transition: transform 0.12s ease, filter 0.12s ease;
+    }
+
+    button:hover { transform: translateY(-1px) scale(1.01); filter: brightness(1.05); }
+    button:active { transform: translateY(0); }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      table-layout: auto;
+    }
+
+    th, td {
+      padding: 12px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      font-size: 14px;
+      vertical-align: top;
+    }
+
+    th { background: rgba(255,255,255,0.04); font-weight: 700; letter-spacing: 0.01em; text-transform: uppercase; font-size: 12px; color: var(--muted); }
+
+    tbody tr:hover { background: rgba(45,212,255,0.05); }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: #0b1221;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
+      background: rgba(255,255,255,0.9);
+    }
+    .tag-typ { background: linear-gradient(120deg, #2dd4ff, #1a8cff); color: #0b1221; }
+    .tag-heizung { background: linear-gradient(120deg, #7dd3fc, #38bdf8); color: #0b1221; }
+    .tag-objekt { background: linear-gradient(120deg, #c2e7ff, #8fbef5); color: #0b1221; }
+    .tag-status { color: #0b1221; }
+    .status-offen { background: #ffe08a; }
+    .status-inarbeit { background: #2dd4ff; }
+    .status-erledigt { background: #48e59c; }
+
+    .tag-status { padding-left: 10px; padding-right: 10px; }
+
+    .actions-cell {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: nowrap;
+    }
+
+    .cell-objekt .objekt-name {
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      display: inline-block;
+      vertical-align: bottom;
+    }
+
+    td:nth-child(5) {
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .delete-btn {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .ghost-btn {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 9px 12px;
+      font-weight: 700;
+      border-radius: 10px;
+      transition: border-color 0.12s ease, color 0.12s ease;
+    }
+
+    .ghost-btn:hover { border-color: var(--accent); color: var(--text); }
+
+    .actions-cell {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      align-items: center;
+      white-space: nowrap;
+      flex-wrap: nowrap;
+    }
+
+    .actions-cell button {
+      min-width: 88px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .copy-btn {
+      margin-left: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .copy-btn:hover { border-color: var(--accent); color: var(--text); }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .search-row input {
+      width: 100%;
+      padding-right: 44px;
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: rgba(255,255,255,0.08);
+      color: var(--muted);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .clear-btn:hover { background: rgba(45,212,255,0.2); color: var(--text); }
+
+    .empty { color: var(--muted); text-align: center; padding: 18px 0; }
+
+    @media (max-width: 680px) {
+      body { padding: 18px; }
+      header { grid-template-columns: 1fr; }
+      h1 { font-size: 22px; }
+      table { min-width: 0; }
+      th, td { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="brand-logo">PAUL</div>
+        <h1>PaulTech AG<br><span>Anlagenlogbuch</span></h1>
+      </div>
+    </header>
+
+    <section class="card">
+      <h3 style="margin-top:0; margin-bottom:10px; letter-spacing:-0.01em;">Neuer Eintrag</h3>
+      <div class="grid-form" style="margin-bottom: 10px;">
+        <div>
+          <label for="typ">Typ</label>
+          <select id="typ">
+            <option>Störung</option>
+            <option>Anruf</option>
+            <option>Einsatz</option>
+          </select>
+        </div>
+        <div>
+          <label for="projekt">Projektnummer</label>
+          <input type="text" id="projekt" placeholder="z.B. 40000" autocomplete="off">
+        </div>
+        <div>
+          <label for="objekt">Liegenschaft / Anlage</label>
+          <input type="text" id="objekt" placeholder="z.B. Heizzentrale Nord" autocomplete="off">
+        </div>
+        <div>
+          <label for="heizung">Heizungsart</label>
+          <select id="heizung">
+            <option>Fernwärme</option>
+            <option>Gas</option>
+            <option>Öl</option>
+            <option>Wärmepumpe</option>
+          </select>
+        </div>
+        <div>
+          <label for="status">Status</label>
+          <select id="status">
+            <option>offen</option>
+            <option>in Arbeit</option>
+            <option>erledigt</option>
+          </select>
+        </div>
+      </div>
+      <div style="grid-column: 1 / -1;">
+        <label for="beschreibung">Beschreibung</label>
+        <textarea id="beschreibung" placeholder="Grund des Anrufes / Störungsursache"></textarea>
+      </div>
+      <div class="actions">
+        <small id="hint" style="color: var(--muted);"></small>
+        <button class="ghost-btn" id="cancel-btn" style="display:none;">Abbrechen</button>
+        <button id="save-btn">Speichern</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="search-row">
+        <h3 style="margin:0; letter-spacing:-0.01em;">Suche</h3>
+        <div class="search-box">
+          <input type="text" id="suche" placeholder="Suchen..." aria-label="Suche" autocomplete="off">
+          <button id="clear-search" class="clear-btn" aria-label="Filter löschen">×</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card table-wrap">
+      <h3 style="margin-top:0; letter-spacing:-0.01em;">Einträge</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Datum</th>
+            <th>Typ</th>
+            <th>Projektnummer</th>
+            <th>Liegenschaft / Anlage</th>
+            <th>Heizungsart</th>
+            <th>Beschreibung</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="liste"></tbody>
+      </table>
+      <div id="empty" class="empty" style="display:none;">Noch keine Einträge.</div>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'logbuch';
+
+    const els = {
+      typ: document.getElementById('typ'),
+      projekt: document.getElementById('projekt'),
+      objekt: document.getElementById('objekt'),
+      heizung: document.getElementById('heizung'),
+      beschreibung: document.getElementById('beschreibung'),
+      status: document.getElementById('status'),
+      liste: document.getElementById('liste'),
+      suche: document.getElementById('suche'),
+      clearSearch: document.getElementById('clear-search'),
+      hint: document.getElementById('hint'),
+      empty: document.getElementById('empty'),
+      saveBtn: document.getElementById('save-btn'),
+      cancelBtn: document.getElementById('cancel-btn')
+    };
+
+    let editingIndex = null;
+    let storageOk = true;
+    let memoryEntries = [];
+
+    function loadEntries() {
+      if (!storageOk) return memoryEntries;
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      } catch (e) {
+        console.error('Konnte lokale Daten nicht lesen', e);
+        storageOk = false;
+        flashHint('Lokaler Speicher blockiert – Zwischenspeicher aktiv.');
+        return memoryEntries;
+      }
+    }
+
+    function persist(entries) {
+      if (!storageOk) {
+        memoryEntries = entries.slice();
+        return;
+      }
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      } catch (e) {
+        console.error('Konnte lokale Daten nicht speichern', e);
+        storageOk = false;
+        memoryEntries = entries.slice();
+        flashHint('Speichern im Browser blockiert. Daten bleiben nur bis zum Schließen erhalten.');
+      }
+    }
+
+    function addEntry() {
+      const entry = {
+        datum: new Date().toLocaleString('de-DE'),
+        typ: els.typ.value.trim(),
+        projekt: els.projekt.value.trim(),
+        objekt: els.objekt.value.trim(),
+        heizung: els.heizung.value.trim(),
+        beschreibung: els.beschreibung.value.trim(),
+        status: els.status.value.trim()
+      };
+
+      if (!entry.objekt && !entry.beschreibung) {
+        flashHint('Bitte mindestens Objekt oder Beschreibung ausfüllen.');
+        return;
+      }
+
+      const entries = loadEntries();
+
+      if (editingIndex !== null) {
+        entry.datum = entries[editingIndex].datum; // keep original timestamp
+        entries[editingIndex] = entry;
+        flashHint('Eintrag aktualisiert.');
+      } else {
+        flashHint('Gespeichert.');
+        entries.push(entry);
+      }
+
+      persist(entries);
+      els.suche.value = '';
+      els.projekt.value = '';
+      clearForm();
+      render();
+    }
+
+    function deleteEntry(index) {
+      const entries = loadEntries();
+      entries.splice(index, 1);
+      persist(entries);
+      render();
+      if (editingIndex === index) clearForm();
+    }
+
+    function startEdit(index) {
+      const entries = loadEntries();
+      const entry = entries[index];
+      if (!entry) return;
+      editingIndex = index;
+      els.typ.value = entry.typ;
+      els.projekt.value = entry.projekt || '';
+      els.objekt.value = entry.objekt || '';
+      els.heizung.value = entry.heizung || 'Fernwärme';
+      els.status.value = entry.status || 'offen';
+      els.beschreibung.value = entry.beschreibung || '';
+      els.saveBtn.textContent = 'Aktualisieren';
+      els.cancelBtn.style.display = 'inline-flex';
+      flashHint('Bearbeitung aktiviert. Änderungen mit „Aktualisieren“ speichern.');
+    }
+
+    function filterByObject(objekt) {
+      if (!objekt) return;
+      els.suche.value = objekt;
+      render();
+      flashHint(`Gefiltert nach Liegenschaft: ${objekt}`);
+    }
+
+    function copyText(text) {
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(() => {
+        flashHint(`Kopiert: ${text}`);
+      }).catch(() => {
+        flashHint('Konnte nicht kopieren');
+      });
+    }
+
+    function clearForm() {
+      els.objekt.value = '';
+      els.beschreibung.value = '';
+      els.typ.value = 'Störung';
+      els.projekt.value = '';
+      els.heizung.value = 'Fernwärme';
+      els.status.value = 'offen';
+      editingIndex = null;
+      els.saveBtn.textContent = 'Speichern';
+      els.cancelBtn.style.display = 'none';
+    }
+
+    function statusClass(status) {
+      const key = status.toLowerCase().replace(/\\s+/g, '');
+      if (key === 'offen') return 'status-offen';
+      if (key === 'inarbeit') return 'status-inarbeit';
+      if (key === 'erledigt') return 'status-erledigt';
+      return '';
+    }
+
+    function render() {
+      const entries = loadEntries();
+      const term = els.suche.value.toLowerCase();
+      const projTerm = els.projekt.value.trim().toLowerCase();
+
+      let rows = '';
+      entries.forEach((e, i) => {
+        const text = (e.typ + e.projekt + e.objekt + e.beschreibung + e.status + e.datum).toLowerCase();
+        const matchesSearch = !term || text.includes(term);
+        const matchesProjekt = !projTerm || (e.projekt || '').toLowerCase().includes(projTerm);
+        if (matchesSearch && matchesProjekt) {
+          const safeObjekt = (e.objekt || '').replace(/'/g, "\\'");
+          const safeProjekt = (e.projekt || '').replace(/'/g, "\\'");
+          rows += `
+            <tr onclick="filterByObject('${safeObjekt}')">
+              <td>${e.datum}</td>
+              <td><span class="tag tag-typ">${e.typ}</span></td>
+              <td>${e.projekt || '–'} <button class="copy-btn" onclick="event.stopPropagation(); copyText('${safeProjekt || ''}')">Kopieren</button></td>
+              <td class="cell-objekt"><span class="tag tag-objekt"><span class="objekt-name">${e.objekt || '–'}</span></span> <button class="copy-btn" onclick="event.stopPropagation(); copyText('${safeObjekt || ''}')">Kopieren</button></td>
+              <td><span class="tag tag-heizung">${(e.heizung || '–')}</span></td>
+              <td>${e.beschreibung || '–'}</td>
+              <td><span class="tag tag-status ${statusClass(e.status)}">${e.status}</span></td>
+              <td class="actions-cell">
+                <button class="delete-btn" aria-label="Eintrag bearbeiten" onclick="event.stopPropagation(); startEdit(${i});">Bearbeiten</button>
+                <button class="delete-btn" aria-label="Eintrag löschen" onclick="event.stopPropagation(); deleteEntry(${i});">Löschen</button>
+              </td>
+            </tr>`;
+        }
+      });
+
+      els.liste.innerHTML = rows;
+      const hasRows = rows.trim().length > 0;
+      els.empty.style.display = hasRows ? 'none' : 'block';
+      els.clearSearch.style.display = term ? 'inline-flex' : 'none';
+    }
+
+    function flashHint(text) {
+      els.hint.textContent = text;
+      setTimeout(() => { els.hint.textContent = ''; }, 2200);
+    }
+
+    // Wire up interactions
+    els.saveBtn.addEventListener('click', addEntry);
+    els.cancelBtn.addEventListener('click', clearForm);
+    els.suche.addEventListener('input', render);
+    els.clearSearch.addEventListener('click', () => {
+      els.suche.value = '';
+      els.projekt.value = '';
+      render();
+    });
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) {
+        addEntry();
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>
